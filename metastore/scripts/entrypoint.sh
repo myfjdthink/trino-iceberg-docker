@@ -9,5 +9,5 @@ export HADOOP_CLASSPATH=${HADOOP_HOME}/share/hadoop/tools/lib/aws-java-sdk-bundl
 
 # metastore
 # initSchema only needs to be run once
-#${HIVE_HOME}/bin/schematool -initSchema -dbType postgres
+${HIVE_HOME}/bin/schematool -initSchema -dbType postgres
 ${HIVE_HOME}/bin/start-metastore

@@ -38,10 +38,10 @@ services:
       /usr/bin/mc mb minio/warehouse;
       /usr/bin/mc policy set public minio/warehouse;
       exit 0;
-      "    
+      "
     depends_on:
       minio:
-        condition: service_healthy  
+        condition: service_healthy
 
   postgres:
     image: postgres
@@ -63,7 +63,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  
+
   metastore:
     build: metastore/
     container_name: metastore
@@ -84,9 +84,18 @@ services:
         condition: service_healthy
   trino:
     image: trinodb/trino:408
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
     container_name: trino
     volumes:
+      - ./data/trino/applog:/applog
       - ./trino/catalog:/etc/trino/catalog
+      - ./trino/jvm.config:/etc/trino/jvm.config
+      - ./trino/resource/resource-groups.json:/etc/trino/resource-groups.json
+      - ./trino/resource/resource-groups.properties:/etc/trino/resource-groups.properties
+      - ./trino/master_config.properties:/etc/trino/config.properties
     ports:
       - '8060:8080'
     networks:
@@ -98,6 +107,17 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+  worker:
+    image: trinodb/trino:408
+    container_name: worker
+    volumes:
+      - ./trino/worker_config.properties:/etc/trino/config.properties
+    ports:
+      - '8061:8080'
+    networks:
+      tnet:
+        aliases:
+          - worker
 networks:
   tnet:
     name: tnet

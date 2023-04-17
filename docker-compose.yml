@@ -84,17 +84,15 @@ services:
         condition: service_healthy
   trino:
     image: trinodb/trino:408
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 1024M
     container_name: trino
     volumes:
       - ./data/trino/applog:/applog
       - ./trino/catalog:/etc/trino/catalog
-      - ./trino/jvm.config:/etc/trino/jvm.config
-      - ./trino/resource/resource-groups.json:/etc/trino/resource-groups.json
-      - ./trino/resource/resource-groups.properties:/etc/trino/resource-groups.properties
+      - ./trino/log.properties:/etc/trino/log.properties
       - ./trino/master_config.properties:/etc/trino/config.properties
     ports:
       - '8060:8080'

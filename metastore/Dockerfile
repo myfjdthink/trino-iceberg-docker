@@ -47,6 +47,7 @@ COPY conf/metastore-site.xml ${HIVE_HOME}/conf
 COPY scripts/entrypoint.sh ${BIN_DIR}
 
 RUN chmod u+x ${HIVE_HOME}/bin/*
+RUN chmod u+x ${BIN_DIR}/entrypoint.sh
 
 EXPOSE 9083
 

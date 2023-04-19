@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  metastore:
+    build: ./
+    privileged: true
+    container_name: metastore
+    ports:
+      - '9083:9083' # Metastore thrift
+    volumes:
+      - ./logs/metastore-logs:/opt/metastore/logs

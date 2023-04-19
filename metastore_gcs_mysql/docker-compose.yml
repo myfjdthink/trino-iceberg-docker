@@ -6,3 +6,5 @@ services:
     container_name: metastore
     ports:
       - '9083:9083' # Metastore thrift
+    volumes:
+      - ./logs/metastore-logs:/opt/metastore/logs

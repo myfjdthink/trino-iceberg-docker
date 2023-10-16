@@ -2,8 +2,6 @@
 #FROM openjdk:11-bullseye
 FROM openjdk:11-jre
 
-ENV METASTORE_HADOOP_VERSION=3.2.0
-ENV METASTORE_VERSION=3.0.0
 ENV HADOOP_HOME=/opt/hadoop
 ENV HIVE_HOME=/opt/metastore
 ENV BIN_DIR=/usr/bin
@@ -23,11 +21,11 @@ RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zi
     && rm awscliv2.zip \
     && rm -rf aws/
 # Download and install haddop for metastore 
-RUN curl https://archive.apache.org/dist/hadoop/common/hadoop-${METASTORE_HADOOP_VERSION}/hadoop-${METASTORE_HADOOP_VERSION}.tar.gz -Lo hadoop.tgz \
+RUN curl https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-3.2.4/hadoop-3.2.4.tar.gz -Lo hadoop.tgz \
     && tar xvzf hadoop.tgz --directory ${HADOOP_HOME} --strip-components 1 \
     && rm hadoop.tgz
 # Download and install Hive metastore
-RUN curl https://downloads.apache.org/hive/hive-standalone-metastore-${METASTORE_VERSION}/hive-standalone-metastore-${METASTORE_VERSION}-bin.tar.gz -Lo hive.tgz \
+RUN curl https://mirrors.tuna.tsinghua.edu.cn/apache/hive/hive-standalone-metastore-3.0.0/hive-standalone-metastore-3.0.0-bin.tar.gz -Lo hive.tgz \
     && tar xvzf hive.tgz --directory ${HIVE_HOME} --strip-components 1 \
     && rm hive.tgz
 # Download and install Postgres deiver for Hive metastore

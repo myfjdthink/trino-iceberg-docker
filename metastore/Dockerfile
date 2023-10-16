@@ -21,7 +21,7 @@ RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zi
     && rm awscliv2.zip \
     && rm -rf aws/
 # Download and install haddop for metastore 
-RUN curl https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-3.2.4/hadoop-3.2.4.tar.gz -Lo hadoop.tgz \
+RUN curl https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-3.2.3/hadoop-3.2.3.tar.gz -Lo hadoop.tgz \
     && tar xvzf hadoop.tgz --directory ${HADOOP_HOME} --strip-components 1 \
     && rm hadoop.tgz
 # Download and install Hive metastore

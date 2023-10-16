@@ -50,6 +50,4 @@ RUN chmod u+x ${HIVE_HOME}/bin/*
 
 EXPOSE 9083
 
-
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
-CMD ["notebook"]

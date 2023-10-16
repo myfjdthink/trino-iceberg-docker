@@ -1,48 +1,5 @@
 version: '3.9'
 services:
-
-  minio:
-    hostname: minio
-    image: 'minio/minio'
-    container_name: minio
-    ports:
-      - '9000:9000'
-      - '9001:9001'
-    volumes:
-      - ./data/minio:/data
-    environment:
-      - MINIO_ROOT_USER=minio
-      - MINIO_ROOT_PASSWORD=minio123
-    command: server /data --console-address ":9001"
-    networks:
-      - tnet
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  mc:
-    image: minio/mc
-    container_name: mc
-    hostname: mc
-    environment:
-      - AWS_ACCESS_KEY_ID=minio
-      - AWS_SECRET_ACCESS_KEY=minio123
-      - AWS_REGION=us-east-1
-    networks:
-      - tnet
-    entrypoint: >
-      /bin/sh -c "
-      until (/usr/bin/mc config host add minio http://minio:9000 minio minio123) do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc mb minio/warehouse;
-      /usr/bin/mc policy set public minio/warehouse;
-      exit 0;
-      "
-    depends_on:
-      minio:
-        condition: service_healthy
-
   postgres:
     image: postgres
     hostname: postgres
@@ -56,8 +13,6 @@ services:
       - '5432:5432'
     volumes:
       - ./data/postgres:/var/lib/postgresql/data/pgdata
-    networks:
-      - tnet
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ngods"]
       interval: 5s
@@ -67,56 +22,21 @@ services:
   metastore:
     build: metastore/
     container_name: metastore
-    environment:
-      - AWS_ACCESS_KEY_ID=minio
-      - AWS_SECRET_ACCESS_KEY=minio123
-      - AWS_REGION=us-east-1
     ports:
       - '9083:9083' # Metastore thrift
-    networks:
-      tnet:
-        aliases:
-          - metastore
     depends_on:
       postgres:
         condition: service_healthy
       minio:
         condition: service_healthy
   trino:
-    image: trinodb/trino:408
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 1024M
+    image: trinodb/trino:425
     container_name: trino
     volumes:
-      - ./data/trino/applog:/applog
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/log.properties:/etc/trino/log.properties
-      - ./trino/master_config.properties:/etc/trino/config.properties
     ports:
       - '8060:8080'
-    networks:
-      tnet:
-        aliases:
-          - trino
     depends_on:
       postgres:
         condition: service_healthy
-      minio:
-        condition: service_healthy
-  worker:
-    image: trinodb/trino:408
-    container_name: worker
-    volumes:
-      - ./trino/worker_config.properties:/etc/trino/config.properties
-    ports:
-      - '8061:8080'
-    networks:
-      tnet:
-        aliases:
-          - worker
-networks:
-  tnet:
-    name: tnet
-    driver: bridge

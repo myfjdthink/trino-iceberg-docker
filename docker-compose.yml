@@ -28,7 +28,8 @@ services:
       postgres:
         condition: service_healthy
   trino:
-    image: trinodb/trino:425
+#    image: trinodb/trino:425
+    build: trino/
     container_name: trino
     volumes:
       - ./trino/catalog:/etc/trino/catalog
